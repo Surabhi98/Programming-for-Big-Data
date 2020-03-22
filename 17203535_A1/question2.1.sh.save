@@ -1,0 +1,47 @@
+#!/bin/bash
+
+#Question 2.1 : Data Management
+#Creating and populating the MySQL database
+
+filename="./reddit-clean-1000.csv"
+
+# create a table inside the vito  database
+mysql -h localhost -u "vito" --password="czB9aUXUTy"  -D "vito" -e "CREATE TABLE  authors (id int AUTO_INCREMENT NOT NULL,  Author VARCHAR(255), Author_cakeday VARCHAR(255), Author_flair_css_class VARCHAR(255), Author_flair_text  VARCHAR(255), Author_id VARCHAR(255), PRIMARY KEY(id))"
+mysql -h localhost -u "vito" --password="czB9aUXUTy"  -D "vito" -e "CREATE TABLE  posts (Post int AUTO_INCREMENT NOT NULL, Post_id VARCHAR(255) NOT NULL, Domain VARCHAR(255), Title VARCHAR(255), Edited  VARCHAR(255), PRIMARY KEY(Post_id), FOREIGN KEY(Post) REFERENCES authors(id))"
+mysql -h localhost -u "vito" --password="czB9aUXUTy"  -D "vito" -e "CREATE TABLE  reddits (id int AUTO_INCREMENT NOT NULL,  Name VARCHAR(255), Reddit_id VARCHAR(255), URL VARCHAR(255), Thumbnail VARCHAR(255), PRIMARY  KEY(id))"
+
+setter=0
+while IFS= read -r line
+do
+
+ if [ $setter -gt 0 ]; then
+  # extract data from current record
+ 	author=$(echo $line | cut -d"," -f1)
+  	author_cakeday=$(echo $line | cut -d"," -f2)
+  	author_flair_css_class=$(echo $line | cut -d"," -f3)
+  	author_flair_text=$(echo $line | cut -d"," -f4)
+  	author_id=$(echo $line | cut -d"," -f5)
+
+  	id=$(echo $line | cut -d"," -f13)
+  	domain=$(echo $line | cut -d"," -f10)
+  	title=$(echo $line | cut -d"," -f38)
+  	edited=$(echo $line | cut -d"," -f11)
+
+
+ 	reddit_name=$(echo $line | cut -d"," -f31)
+ 	reddit_id=$(echo $line | cut -d"," -f32)
+  	url=$(echo $line | cut -d"," -f39)
+  	thumbnail=$(echo $line | cut -d"," -f35)
+
+
+
+# add each record to the database
+	mysql  -h localhost -u "vito" --password="czB9aUXUTy"  -D "vito" -e "INSERT INTO authors ( Author, Author_cakeday, Author_flair_css_class, Author_flair_text, Author_id ) VALUES ( '$author', '$author_cakeday', '$author_flair_css_class', '$author_flair_text', '$author_id' )"
+	mysql  -h localhost -u "vito" --password="czB9aUXUTy"  -D "vito" -e "INSERT INTO posts ( Post_id, Domain, Title, Edited ) VALUES ( '$id', '$domain', '$title', '$edited' )"
+	mysql  -h localhost -u "vito" --password="czB9aUXUTy"  -D "vito" -e "INSERT INTO reddits (Name, Reddit_id, URL, Thumbnail ) VALUES ('$reddit_name', '$reddit_id', '$url', '$thumbnail')"
+ # echo $col1 $col2 $col3 $col4 $col5
+
+ fi
+	setter=$(($setter+1))
+done < "$filename"
+

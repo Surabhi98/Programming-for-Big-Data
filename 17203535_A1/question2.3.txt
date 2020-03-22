@@ -1,0 +1,15 @@
+#Question 2.3 : SQL Queries
+//Text file to represent the SQL queries
+//To run them, copy ad paste them inside the MySQL server 
+
+1. select * from authors limit 10;
+
+2. select * from reddits limit 10;
+
+3. select * from posts limit 10;
+
+4. select authors.Author, posts.Title from authors join posts where authors.id = posts.Post limit 10;
+
+5. select authors.Author, sum(posts.Title) as num_posts from authors join posts where authors.id = posts.Post group by authors.Author order by num_posts desc limit 10;
+
+ 
